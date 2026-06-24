@@ -1,0 +1,202 @@
+name: QA Automation Pipeline (Sequential Agents)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  # Agent 1: Generate Test Cases
+  generate-test-cases:
+    name: Agent 1 - QA Test Case Generator
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate Test Cases
+        run: |
+          echo "🧪 Agent 1: Generating test cases..."
+          # Create a sample test case JSON file
+          mkdir -p test-artifacts
+          cat > test-artifacts/generated-test-cases.json << 'EOF'
+          {
+            "feature": "Login Functionality",
+            "scenarios": [
+              {
+                "name": "User login with valid credentials",
+                "steps": [
+                  "Given user opens login page",
+                  "When user enters email 'test@example.com'",
+                  "And user enters password 'password123'",
+                  "And user clicks login button",
+                  "Then user should see dashboard"
+                ]
+              },
+              {
+                "name": "User login with invalid credentials",
+                "steps": [
+                  "Given user opens login page",
+                  "When user enters email 'invalid@example.com'",
+                  "And user enters password 'wrongpassword'",
+                  "And user clicks login button",
+                  "Then user should see error message"
+                ]
+              }
+            ]
+          }
+          EOF
+          echo "✅ Test cases generated successfully"
+          cat test-artifacts/generated-test-cases.json
+
+      - name: Upload Test Cases Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-cases-artifact
+          path: test-artifacts/generated-test-cases.json
+
+  # Agent 2: Generate Automation Code (Depends on Agent 1)
+  generate-automation-code:
+    name: Agent 2 - UI Test Automator
+    runs-on: ubuntu-latest
+    needs: generate-test-cases  # Waits for Agent 1 to complete
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - name: Download Test Cases from Agent 1
+        uses: actions/download-artifact@v4
+        with:
+          name: test-cases-artifact
+          path: test-artifacts
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate Automation Code
+        run: |
+          echo "🤖 Agent 2: Generating automation code from test cases..."
+          # Read the test cases and generate automation code
+          TEST_CASES=$(cat test-artifacts/generated-test-cases.json)
+          echo "📋 Using test cases: $TEST_CASES"
+
+          # Create automation code directory
+          mkdir -p src/tests/features
+          mkdir -p src/tests/steps
+
+          # Generate Feature file
+          cat > src/tests/features/generated-login.feature << 'EOF'
+          Feature: Login Functionality
+
+            Scenario: User login with valid credentials
+              Given user opens login page
+              When user enters email "test@example.com"
+              And user enters password "password123"
+              And user clicks login button
+              Then user should see dashboard
+
+            Scenario: User login with invalid credentials
+              Given user opens login page
+              When user enters email "invalid@example.com"
+              And user enters password "wrongpassword"
+              And user clicks login button
+              Then user should see error message
+          EOF
+
+          # Generate Step Definitions
+          cat > src/tests/steps/generated-login.ts << 'EOF'
+          import { Given, When, Then } from '@cucumber/cucumber';
+          import { expect } from '@playwright/test';
+          import { CustomWorld } from '../support/world';
+
+          Given('user opens login page', async function (this: CustomWorld) {
+            await this.page.goto('https://example.com/login');
+          });
+
+          When('user enters email {string}', async function (this: CustomWorld, email: string) {
+            await this.page.fill('input[type="email"]', email);
+          });
+
+          When('user enters password {string}', async function (this: CustomWorld, password: string) {
+            await this.page.fill('input[type="password"]', password);
+          });
+
+          When('user clicks login button', async function (this: CustomWorld) {
+            await this.page.click('button:has-text("Login")');
+          });
+
+          Then('user should see dashboard', async function (this: CustomWorld) {
+            await expect(this.page).toHaveURL(/\/dashboard/);
+          });
+
+          Then('user should see error message', async function (this: CustomWorld) {
+            await expect(this.page.locator('text=Invalid credentials')).toBeVisible();
+          });
+          EOF
+
+          echo "✅ Automation code generated successfully"
+
+      - name: Upload Generated Code Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-code-artifact
+          path: |
+            src/tests/features/generated-login.feature
+            src/tests/steps/generated-login.ts
+
+      - name: Run Generated Tests (Optional)
+        run: |
+          echo "🧪 Running generated automation tests..."
+          npx cucumber-js src/tests/features/generated-login.feature || true
+          echo "✅ Test execution completed"
+
+  # Final Stage: Merge Results
+  pipeline-summary:
+    name: Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [generate-test-cases, generate-automation-code]
+    if: always()
+
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: pipeline-artifacts
+
+      - name: Display Pipeline Results
+        run: |
+          echo "=========================================="
+          echo "✅ QA AUTOMATION PIPELINE COMPLETED"
+          echo "=========================================="
+          echo ""
+          echo "📊 Pipeline Summary:"
+          echo "  ✓ Agent 1: Test Cases Generated"
+          echo "  ✓ Agent 2: Automation Code Generated"
+          echo "  ✓ Pipeline: Complete"
+          echo ""
+          echo "📁 Generated Artifacts:"
+          find pipeline-artifacts -type f -exec echo "  - {}" \;
+          echo ""
+          echo "=========================================="

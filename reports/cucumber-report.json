@@ -4,96 +4,122 @@
     "elements": [
       {
         "description": "",
-        "id": "login;user-creates-a-new-event",
+        "id": "my-bookings;my-bookings-page-lists-all-existing-bookings-with-complete-details-after-successful-login",
         "keyword": "Scenario",
-        "line": 13,
-        "name": "User creates a new Event",
+        "line": 9,
+        "name": "My Bookings page lists all existing bookings with complete details after successful login",
         "steps": [
           {
             "keyword": "Before",
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1060330875
+              "duration": 993012750
             }
           },
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 14,
+            "line": 5,
             "name": "user login into the app",
             "match": {
               "location": "src/tests/steps/test.ts:13"
             },
             "result": {
               "status": "passed",
-              "duration": 2474819958
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "When ",
-            "line": 15,
-            "name": "user clicks on Events tab",
-            "match": {
-              "location": "src/tests/steps/test.ts:22"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 49877542
+              "duration": 1848982708
             }
           },
           {
             "arguments": [],
             "keyword": "And ",
-            "line": 16,
-            "name": "user clicks on add new event button",
+            "line": 6,
+            "name": "user is on the My Bookings listing page",
             "match": {
-              "location": "src/tests/steps/test.ts:26"
+              "location": "src/tests/steps/my-bookings.ts:45"
             },
             "result": {
               "status": "passed",
-              "duration": 1006868124
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 17,
-            "name": "user fills new Event form",
-            "match": {
-              "location": "src/tests/steps/test.ts:30"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 96698625
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 18,
-            "name": "user clicks on add event button",
-            "match": {
-              "location": "src/tests/steps/test.ts:40"
-            },
-            "result": {
-              "status": "passed",
-              "duration": 41831165
+              "duration": 835129459
             }
           },
           {
             "arguments": [],
             "keyword": "Then ",
-            "line": 19,
-            "name": "user validates Event has been created",
+            "line": 10,
+            "name": "the page heading should read \"My Bookings\"",
             "match": {
-              "location": "src/tests/steps/test.ts:44"
+              "location": "src/tests/steps/my-bookings.ts:57"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18367499
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "user should see at least one booking card on the My Bookings listing",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:64"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11102874
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 12,
+            "name": "the first booking card should display event name, date, venue, seats, price and status",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:72"
             },
             "result": {
               "status": "failed",
-              "duration": 5010121125,
-              "error_message": "Error: function timed out, ensure the promise resolves within 5000 milliseconds\n    at Timeout.<anonymous> (/Users/manishkumar/AI Projects/playwright/node_modules/@cucumber/cucumber/src/time.ts:50:14)\n    at listOnTimeout (node:internal/timers:594:17)\n    at processTimers (node:internal/timers:529:7)"
+              "duration": 5016141458,
+              "error_message": "Error: venue on first booking card should be visible\n\n\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.booking-card, .booking-item, [data-testid=\"booking-card\"], .card:has(.status), .card:has-text(\"Confirmed\"), .card:has-text(\"Cancelled\")').first().locator('.event-venue, .venue, .location').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"to.be.visible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('.booking-card, .booking-item, [data-testid=\"booking-card\"], .card:has(.status), .card:has-text(\"Confirmed\"), .card:has-text(\"Cancelled\")').first().locator('.event-venue, .venue, .location').first()\u001b[22m\n\n    at captureRawStack (/Users/manishkumar/AI Projects/playwright/node_modules/playwright-core/lib/coreBundle.js:3130:17)\n    at callMatcherAsStep (/Users/manishkumar/AI Projects/playwright/node_modules/playwright/lib/matchers/expect.js:12873:57)\n    at Object.toBeVisible (/Users/manishkumar/AI Projects/playwright/node_modules/playwright/lib/matchers/expect.js:12863:23)\n    at CustomWorld.<anonymous> (/Users/manishkumar/AI Projects/playwright/src/tests/steps/my-bookings.ts:77:89)"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 13,
+            "name": "the URL should reflect the My Bookings route",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:83"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 14,
+            "name": "the My Bookings nav item should be the active navigation item",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:88"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 15,
+            "name": "user should see at least one Confirmed status badge on the My Bookings listing",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:105"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
             }
           },
           {
@@ -101,24 +127,215 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 96535832
+              "duration": 89366583
             }
           }
         ],
         "tags": [
           {
-            "name": "@test",
-            "line": 12
+            "name": "@debug",
+            "line": 1
+          },
+          {
+            "name": "@TC-BOOK-001",
+            "line": 8
+          },
+          {
+            "name": "@smoke",
+            "line": 8
+          },
+          {
+            "name": "@regression",
+            "line": 8
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "my-bookings;successfully-cancel-an-existing-confirmed-booking-from-the-my-bookings-page",
+        "keyword": "Scenario",
+        "line": 18,
+        "name": "Successfully cancel an existing Confirmed booking from the My Bookings page",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 382676041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "user login into the app",
+            "match": {
+              "location": "src/tests/steps/test.ts:13"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 1432633416
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 6,
+            "name": "user is on the My Bookings listing page",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:45"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 798026459
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 25,
+            "name": "a Confirmed booking is available to cancel",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:133"
+            },
+            "result": {
+              "status": "pending",
+              "duration": 6433082
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 26,
+            "name": "user captures the event name and status of the first Confirmed booking",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:206"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 27,
+            "name": "user clicks the Cancel button on the first Confirmed booking",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:216"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 28,
+            "name": "the cancellation confirmation modal should be visible",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:229"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 29,
+            "name": "the modal should expose Keep Booking and Confirm Cancel actions",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:235"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 30,
+            "name": "user confirms the cancellation",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:242"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 31,
+            "name": "a cancellation success message should be visible",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:250"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 32,
+            "name": "the previously captured booking should now display a Cancelled status badge",
+            "match": {
+              "location": "src/tests/steps/my-bookings.ts:269"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 63666041
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@debug",
+            "line": 1
+          },
+          {
+            "name": "@TC-BOOK-002",
+            "line": 17
+          },
+          {
+            "name": "@smoke",
+            "line": 17
+          },
+          {
+            "name": "@regression",
+            "line": 17
           }
         ],
         "type": "scenario"
       }
     ],
-    "id": "login",
-    "line": 1,
+    "id": "my-bookings",
+    "line": 2,
     "keyword": "Feature",
-    "name": "Login",
-    "tags": [],
-    "uri": "src/tests/features/test.feature"
+    "name": "My Bookings",
+    "tags": [
+      {
+        "name": "@debug",
+        "line": 1
+      }
+    ],
+    "uri": "src/tests/features/my-bookings.feature"
   }
 ]

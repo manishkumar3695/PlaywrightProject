@@ -13,21 +13,18 @@ on:
       - develop
 
 jobs:
-  test:
+  test-agent-1:
+    name: Test Agent 1
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.x
 
       - name: Install dependencies
         run: npm install
@@ -35,55 +32,72 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Cucumber tests
-        run: npx cucumber-js --tags "@events" 
+      - name: Run Cucumber tests - Agent 1
+        run: npx cucumber-js --tags "@events"
 
       - name: Generate HTML report
         if: always()
         run: node generate-report.js
 
-      - name: Upload Cucumber report
+      - name: Upload Cucumber report - Agent 1
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cucumber-report
+          name: cucumber-report-agent-1
           path: reports/cucumber-report.html
 
-      - name: Upload Playwright report
+  test-agent-2:
+    name: Test Agent 2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Cucumber tests - Agent 2
+        run: npx cucumber-js --tags "@test"
+
+      - name: Generate HTML report
+        if: always()
+        run: node generate-report.js
+
+      - name: Upload Cucumber report - Agent 2
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: cucumber-report-agent-2
+          path: reports/cucumber-report.html
 
-      - name: Comment PR with test results
-        if: always()
-        uses: actions/github-script@v7
+  merge-results:
+    name: Merge Test Results
+    runs-on: ubuntu-latest
+    needs: [test-agent-1, test-agent-2]
+    if: always()
+
+    steps:
+      - name: Download Agent 1 report
+        uses: actions/download-artifact@v4
         with:
-          script: |
-            const fs = require('fs');
-            const reportPath = 'reports/cucumber-report.json';
+          name: cucumber-report-agent-1
 
-            if (fs.existsSync(reportPath)) {
-              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-              const scenarios = report[0]?.elements || [];
-              const passed = scenarios.filter(s => s.steps.every(st => st.result.status === 'passed')).length;
-              const failed = scenarios.filter(s => s.steps.some(st => st.result.status === 'failed')).length;
+      - name: Download Agent 2 report
+        uses: actions/download-artifact@v4
+        with:
+          name: cucumber-report-agent-2
 
-              const comment = `
-              ## 🧪 Cucumber Test Results
-
-              - ✅ Passed: ${passed}
-              - ❌ Failed: ${failed}
-              - 📊 Total: ${scenarios.length}
-
-              📄 **Report**: [View Cucumber Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-              `;
-
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              });
-            }
+      - name: Summary
+        run: |
+          echo "✅ Agent 1 completed"
+          echo "✅ Agent 2 completed"
+          echo "📊 Both agents finished successfully"

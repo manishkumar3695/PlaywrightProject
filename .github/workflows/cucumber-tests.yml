@@ -55,35 +55,3 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-
-      - name: Comment PR with test results
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const reportPath = 'reports/cucumber-report.json';
-
-            if (fs.existsSync(reportPath)) {
-              const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-              const scenarios = report[0]?.elements || [];
-              const passed = scenarios.filter(s => s.steps.every(st => st.result.status === 'passed')).length;
-              const failed = scenarios.filter(s => s.steps.some(st => st.result.status === 'failed')).length;
-
-              const comment = `
-              ## 🧪 Cucumber Test Results
-
-              - ✅ Passed: ${passed}
-              - ❌ Failed: ${failed}
-              - 📊 Total: ${scenarios.length}
-
-              📄 **Report**: [View Cucumber Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-              `;
-
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              });
-            }

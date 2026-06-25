@@ -3,3 +3,5 @@
 - [No bash tool acknowledgement](no_bash_tool_acknowledgement.md) — this env has no Bash tool; report blockers honestly instead of fabricating run output, and use mcp__ide__getDiagnostics for static TS checks.
 - [Destructive scenario skip pattern](destructive_scenario_skip_pattern.md) — for cancel-style scenarios, gate with a `Then ... this.skip()` step so re-runs pass; declare `skip(): never` on CustomWorld.
 - [cucumber-js 13 pending pattern](cucumber_js_13_pending_pattern.md) — `this.pending()` is gone in v13; resolve with `return 'pending'` to mark a step/scenario as PENDING.
+- [Ground locators in MCP snapshot](ground_locators_in_mcp_snapshot.md) — run browser_navigate + browser_snapshot BEFORE writing any locator; JSON is intent, not ground truth (bookings-tab incident 2026-06-24).
+- [Heading locator trap on Sauce Demo](heading_locator_trap_on_sauce_demo.md) — page labels on saucedemo.com are <span data-test="title">, not headings; probe the tag before picking `getByRole('heading', ...)` (add-to-cart incident 2026-06-25).

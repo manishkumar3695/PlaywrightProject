@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "feature_name": "Add to Cart",
+    "feature_description": "Verify that a logged-in Swag Labs user can add inventory items to the cart from the inventory page, that the per-item button toggles to Remove, the cart-badge counter updates, and the added item appears on the /cart.html page with quantity, name, description, price and a Remove action.",
+    "version": "1.0.0",
+    "generated_by": "senior-manual-qa-engineer",
+    "generated_at": "2026-06-25T00:12:00Z",
+    "source": "https://www.saucedemo.com/ — live UI inspected via Playwright MCP browser tools",
+    "assumptions": [
+      "Application under test is the public Sauce Labs 'Swag Labs' demo site at https://www.saucedemo.com/.",
+      "Happy-path user is 'standard_user' with shared password 'secret_sauce' as documented on the login page.",
+      "Each scenario assumes a fresh browser session; no state is shared across scenarios.",
+      "Product slugs are derived from the product name (e.g. 'Sauce Labs Backpack' -> 'sauce-labs-backpack') and are reflected in the data-test attribute on the Add/Remove button.",
+      "Cart badge element is only rendered when count > 0 (absent at zero, present with text content equal to the integer count when > 0).",
+      "Prices are displayed in USD with two decimal places prefixed by '$' (e.g. '$29.99').",
+      "Inventory sort dropdown defaults to 'Name (A to Z)'; sort order does not affect Add to Cart behavior."
+    ],
+    "live_ui_evidence": {
+      "login_page": {
+        "url": "https://www.saucedemo.com/",
+        "page_title": "Swag Labs",
+        "username_textbox_data_test": "username",
+        "password_textbox_data_test": "password",
+        "login_button_data_test": "login-button",
+        "documented_users": ["standard_user", "locked_out_user", "problem_user", "performance_glitch_user", "error_user", "visual_user"],
+        "documented_password": "secret_sauce"
+      },
+      "inventory_page": {
+        "url": "https://www.saucedemo.com/inventory.html",
+        "page_title": "Swag Labs",
+        "products_heading_text": "Products",
+        "product_count": 6,
+        "products_observed": [
+          {"name": "Sauce Labs Backpack", "price": "$29.99", "add_to_cart_data_test": "add-to-cart-sauce-labs-backpack"},
+          {"name": "Sauce Labs Bike Light", "price": "$9.99", "add_to_cart_data_test": "add-to-cart-sauce-labs-bike-light"},
+          {"name": "Sauce Labs Bolt T-Shirt", "price": "$15.99", "add_to_cart_data_test": "add-to-cart-sauce-labs-bolt-t-shirt"},
+          {"name": "Sauce Labs Fleece Jacket", "price": "$49.99", "add_to_cart_data_test": "add-to-cart-sauce-labs-fleece-jacket"},
+          {"name": "Sauce Labs Onesie", "price": "$7.99", "add_to_cart_data_test": "add-to-cart-sauce-labs-onesie"},
+          {"name": "Test.allTheThings() T-Shirt (Red)", "price": "$15.99", "add_to_cart_data_test": "add-to-cart-test.allthethings()-t-shirt-(red)"}
+        ],
+        "add_to_cart_button_initial_classes": "btn btn_primary btn_small btn_inventory",
+        "shopping_cart_link_data_test": "shopping-cart-link",
+        "shopping_cart_badge_data_test": "shopping-cart-badge",
+        "shopping_cart_badge_classes_when_present": "shopping_cart_badge",
+        "sort_dropdown_data_test": "product-sort-container",
+        "sort_options": ["Name (A to Z)", "Name (Z to A)", "Price (low to high)", "Price (high to low)"]
+      },
+      "add_to_cart_toggle_observed": {
+        "before_click": {
+          "button_text": "Add to cart",
+          "button_data_test": "add-to-cart-sauce-labs-backpack",
+          "button_classes": "btn btn_primary btn_small btn_inventory",
+          "badge_present": false
+        },
+        "after_click": {
+          "button_text": "Remove",
+          "button_data_test": "remove-sauce-labs-backpack",
+          "button_classes": "btn btn_secondary btn_small btn_inventory",
+          "badge_present": true,
+          "badge_text": "1"
+        }
+      },
+      "cart_page": {
+        "url": "https://www.saucedemo.com/cart.html",
+        "page_title": "Swag Labs",
+        "page_heading_text": "Your Cart",
+        "column_headers": ["QTY", "Description"],
+        "cart_item_container_data_test": "inventory-item",
+        "quantity_label_data_test": "item-quantity",
+        "product_name_data_test": "inventory-item-name",
+        "product_description_data_test": "inventory-item-desc",
+        "product_price_data_test": "inventory-item-price",
+        "remove_button_data_test_pattern": "remove-<product-slug>",
+        "continue_shopping_button_data_test": "continue-shopping",
+        "checkout_button_data_test": "checkout",
+        "example_cart_row_after_adding_backpack": {
+          "quantity": "1",
+          "name": "Sauce Labs Backpack",
+          "price": "$29.99",
+          "remove_data_test": "remove-sauce-labs-backpack"
+        }
+      }
+    }
+  },
+  "coverage_summary": {
+    "total_test_cases": 2,
+    "by_category": {
+      "smoke": 1,
+      "positive": 1,
+      "negative": 0,
+      "boundary": 0,
+      "ui_ux": 0,
+      "state_session": 0,
+      "accessibility": 0,
+      "integration": 0,
+      "security": 0,
+      "performance_ui": 0
+    },
+    "priority_distribution": {
+      "critical": 1,
+      "high": 1,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "test_cases": [
+    {
+      "id": "TC-SMOKE-001",
+      "title": "Logged-in standard_user can add Sauce Labs Backpack to cart from inventory",
+      "category": "smoke",
+      "priority": "critical",
+      "severity": "blocker",
+      "objective": "Validate the end-to-end happy path: log in with the documented demo credentials, add a single inventory item, and confirm the per-item button toggles to 'Remove' while the cart badge counter increments to 1.",
+      "preconditions": [
+        "Fresh browser session, no cookies or local storage for saucedemo.com.",
+        "Network access to https://www.saucedemo.com/.",
+        "Demo account 'standard_user' is in the documented valid users list on the login page and is not in the 'locked_out_user' set."
+      ],
+      "test_data": [
+        {"field": "Username", "value": "standard_user", "notes": "Documented valid user on login page"},
+        {"field": "Password", "value": "MASKED_PASSWORD_EXAMPLE", "notes": "Shared password is 'secret_sauce' as printed on the login page; do not log raw value"},
+        {"field": "Product to add", "value": "Sauce Labs Backpack", "notes": "First product card in the default A-to-Z sort order; price $29.99"}
+      ],
+      "environment": {
+        "browsers": ["chromium-latest"],
+        "viewports": ["1920x1080"],
+        "os": ["windows-11", "macos-15"],
+        "assumptions": ["Public Sauce Demo environment available, standard_user not temporarily rate-limited"]
+      },
+      "steps": [
+        {
+          "step_number": 1,
+          "action": "Navigate to the Sauce Demo login page",
+          "target": "Login page at https://www.saucedemo.com/",
+          "input_value": null,
+          "expected_result": "Page loads with title 'Swag Labs' and the login form is visible: a Username textbox, a Password textbox, and a Login button. The right-side info panel lists the valid usernames and the shared password.",
+          "automation_hint": "Wait for the page heading 'Swag Labs' to be visible before proceeding."
+        },
+        {
+          "step_number": 2,
+          "action": "Enter the standard_user username into the Username textbox",
+          "target": "Username textbox",
+          "input_value": "standard_user",
+          "expected_result": "The Username field displays 'standard_user' with the text cursor at the end.",
+          "automation_hint": "Reference the element with data-test='username'."
+        },
+        {
+          "step_number": 3,
+          "action": "Enter the shared demo password into the Password textbox",
+          "target": "Password textbox",
+          "input_value": "secret_sauce",
+          "expected_result": "The password is masked (each character rendered as a bullet/dot) and the field contains 11 characters.",
+          "automation_hint": "Reference the element with data-test='password'; assert input type is 'password'."
+        },
+        {
+          "step_number": 4,
+          "action": "Click the Login button to submit credentials",
+          "target": "Login button",
+          "input_value": null,
+          "expected_result": "Browser navigates to https://www.saucedemo.com/inventory.html, the 'Products' heading becomes visible, six product cards render in the inventory grid, and the cart badge area in the top-right is empty (no badge number visible).",
+          "automation_hint": "Reference the button with data-test='login-button'; wait for URL to contain '/inventory.html' and for the 'Products' heading text."
+        },
+        {
+          "step_number": 5,
+          "action": "Locate the 'Sauce Labs Backpack' product card and confirm its initial Add to cart state",
+          "target": "Sauce Labs Backpack card on the inventory grid",
+          "input_value": null,
+          "expected_result": "The card displays the product image, name 'Sauce Labs Backpack', description, price '$29.99', and a button labeled 'Add to cart' with classes including 'btn_primary' and data-test 'add-to-cart-sauce-labs-backpack'.",
+          "automation_hint": "Reference the button with data-test='add-to-cart-sauce-labs-backpack'; assert its accessible text equals 'Add to cart'."
+        },
+        {
+          "step_number": 6,
+          "action": "Click the 'Add to cart' button on the Sauce Labs Backpack card",
+          "target": "Add to cart button on Sauce Labs Backpack card",
+          "input_value": null,
+          "expected_result": "Within the same card the button text changes from 'Add to cart' to 'Remove', the button's data-test changes from 'add-to-cart-sauce-labs-backpack' to 'remove-sauce-labs-backpack', the visual class changes from 'btn_primary' to 'btn_secondary', and a cart badge with text '1' appears inside the cart link in the top-right.",
+          "automation_hint": "After click, wait for the badge element with data-test='shopping-cart-badge' to appear with text '1'."
+        }
+      ],
+      "expected_final_state": "User remains on the inventory page; the Sauce Labs Backpack card now shows a 'Remove' button; the shopping cart icon in the top-right displays the badge '1'; no other product card state has changed.",
+      "expected_post_conditions": [
+        "URL is https://www.saucedemo.com/inventory.html.",
+        "Exactly one inventory item (Sauce Labs Backpack) is recorded as added; the cart badge reads '1'.",
+        "All other product cards still display 'Add to cart' buttons and have not been mutated."
+      ],
+      "related_requirements": ["TC-POS-001"],
+      "tags": ["login", "inventory", "add-to-cart", "happy-path", "regression", "smoke"]
+    },
+    {
+      "id": "TC-POS-001",
+      "title": "Added item appears on /cart.html with quantity 1, full product details, and a working Remove button",
+      "category": "positive",
+      "priority": "high",
+      "severity": "major",
+      "objective": "Verify that after adding a product from the inventory page, navigating to the cart page renders the added item with its quantity, name, description, price and a per-item Remove control, and that the cart badge remains consistent.",
+      "preconditions": [
+        "User is already logged in as 'standard_user' on https://www.saucedemo.com/.",
+        "The Sauce Labs Backpack has been added to the cart in this session (cart badge reads '1' on the inventory page).",
+        "Browser session is otherwise empty — no other items have been added or removed."
+      ],
+      "test_data": [
+        {"field": "Product added in setup", "value": "Sauce Labs Backpack", "notes": "Added via the inventory Add to cart button"},
+        {"field": "Expected quantity on cart row", "value": "1", "notes": null},
+        {"field": "Expected price", "value": "$29.99", "notes": "Matches the price displayed on the inventory card"}
+      ],
+      "environment": {
+        "browsers": ["chromium-latest", "firefox-latest", "edge-latest"],
+        "viewports": ["1920x1080", "1366x768"],
+        "os": ["windows-11", "macos-15"],
+        "assumptions": ["User retains their session across the inventory -> cart navigation; cart state is server-session backed by the session cookie."]
+      },
+      "steps": [
+        {
+          "step_number": 1,
+          "action": "From the inventory page, confirm the cart badge in the top-right reads '1' before navigating",
+          "target": "Shopping cart link / badge in the header",
+          "input_value": null,
+          "expected_result": "The cart link in the header contains a badge span with text content equal to '1'.",
+          "automation_hint": "Reference the badge element with data-test='shopping-cart-badge'; assert its text equals '1'."
+        },
+        {
+          "step_number": 2,
+          "action": "Click the shopping cart icon in the top-right header to open the cart page",
+          "target": "Shopping cart link in the header",
+          "input_value": null,
+          "expected_result": "Browser navigates to https://www.saucedemo.com/cart.html; the 'Your Cart' page heading is visible; the column headers 'QTY' and 'Description' are shown.",
+          "automation_hint": "Reference the link with data-test='shopping-cart-link'; wait for URL to contain '/cart.html' and for the 'Your Cart' heading."
+        },
+        {
+          "step_number": 3,
+          "action": "Locate the cart row for Sauce Labs Backpack and verify the quantity",
+          "target": "Quantity cell of the Sauce Labs Backpack cart row",
+          "input_value": null,
+          "expected_result": "The quantity cell for the Sauce Labs Backpack row displays the text '1'.",
+          "automation_hint": "Reference the quantity element with data-test='item-quantity' inside the row whose product name matches 'Sauce Labs Backpack'."
+        },
+        {
+          "step_number": 4,
+          "action": "Verify the product name, description and price in the Description cell",
+          "target": "Description cell of the Sauce Labs Backpack cart row",
+          "input_value": null,
+          "expected_result": "The row shows the product name 'Sauce Labs Backpack', the description beginning with 'carry.allTheThings()', and the price '$29.99'.",
+          "automation_hint": "Reference the elements with data-test='inventory-item-name', 'inventory-item-desc' and 'inventory-item-price' on the matching row."
+        },
+        {
+          "step_number": 5,
+          "action": "Verify a 'Remove' control is present on the Sauce Labs Backpack row",
+          "target": "Remove button on the Sauce Labs Backpack cart row",
+          "input_value": null,
+          "expected_result": "A button labeled 'Remove' is present on the row with data-test 'remove-sauce-labs-backpack'.",
+          "automation_hint": "Reference the button with data-test='remove-sauce-labs-backpack' inside the Sauce Labs Backpack row."
+        },
+        {
+          "step_number": 6,
+          "action": "Click the 'Remove' button on the Sauce Labs Backpack row",
+          "target": "Remove button on the Sauce Labs Backpack cart row",
+          "input_value": null,
+          "expected_result": "The Sauce Labs Backpack row is removed from the cart list; the page shows an empty cart state; the cart badge in the header is no longer rendered.",
+          "automation_hint": "Wait for the row to disappear; assert no element with data-test='inventory-item' remains and no element with data-test='shopping-cart-badge' is present."
+        }
+      ],
+      "expected_final_state": "The /cart.html page is now empty — the only visible cart-list content is the empty state, the 'Continue Shopping' button and the 'Checkout' button remain. The cart badge in the header is gone.",
+      "expected_post_conditions": [
+        "URL is https://www.saucedemo.com/cart.html.",
+        "No items remain in the cart list; the Sauce Labs Backpack row has been removed.",
+        "Navigating back to /inventory.html would show the Sauce Labs Backpack card once again displaying 'Add to cart' (per the observed toggle behavior)."
+      ],
+      "related_requirements": ["TC-SMOKE-001"],
+      "tags": ["cart", "add-to-cart", "remove", "end-to-end", "regression"]
+    }
+  ],
+  "open_questions": [
+    "Should the cart badge ever show a value greater than 1 for a single product (e.g. qty controls)? Observed UI does not expose a quantity stepper on the inventory page; only on the cart page is 'QTY' a static column. Confirm intended behavior if a quantity stepper is later added.",
+    "Is there an intended maximum number of items that can be added before the badge text wraps or truncates? Not observed on the live UI today.",
+    "Does the cart badge count distinct line items or sum quantities? Observed behavior on this run counted line items (1 line item with quantity 1 produced badge '1'). Confirm whether this holds when a quantity stepper is introduced."
+  ]
+}

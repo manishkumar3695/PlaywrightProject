@@ -1,0 +1,233 @@
+{
+  "meta": {
+    "feature_name": "EventHub - My Bookings",
+    "feature_description": "The 'My Bookings' page (reached from the top-nav link 'My Bookings' / href /bookings) lists the signed-in user's confirmed and historical bookings as a stack of booking cards. Each card shows a reference code (e.g. 'W-7C5YPG'), a status badge ('confirmed' / 'cancelled'), a '#bookingId' link, the event name, the event date, ticket count, venue, booked-on date, total price, and 'View Details' / 'Cancel Booking' buttons. The page has an H1 'My Bookings', a 'Clear all bookings' toolbar action, and an empty state when the user has no bookings. Selecting a card's 'View Details' link navigates to /bookings/:id with a full booking detail view (Event, Customer, Payment, Refund, Booking Information sections).",
+    "version": "1.1.0",
+    "generated_by": "senior-manual-qa-engineer",
+    "generated_at": "2026-06-24T00:00:00Z",
+    "source": "EventHub at https://eventhub.rahulshettyacademy.com/ — verified live via Playwright MCP browser on 2026-06-24 (logged in as manish123@gmail.com). The original v1.0 assumptions about a 'Total Bookings' counter, a search input with placeholder 'Search booking, customer, venue...', a 'Create New Booking' button, and a table with columns (Booking ID, Booking Name, Customer Name, Event Type, Venue, Event Date, Guest Count, Status) do NOT match the live UI and have been removed.",
+    "live_ui_facts": [
+      "Top-nav link text is 'My Bookings' (data-testid='nav-bookings', href='/bookings').",
+      "Page H1 is 'My Bookings' (no separate 'Bookings' heading).",
+      "There is no 'Total Bookings' numeric counter — the count is implicit (number of [data-testid='booking-card'] elements).",
+      "There is no search input on /bookings (zero <input> elements on the page).",
+      "There is no 'Create New Booking' button — bookings are created by booking an event from /events.",
+      "Bookings render as cards, not a <table>. Each card has data-testid='booking-card' and contains a status badge, a '#bookingId' span with data-testid='booking-id', an <h3> event title, date/ticket/venue/booked-on meta lines, a price block, and a 'View Details' link + a 'Cancel Booking' button (data-testid='cancel-booking-btn').",
+      "The page has a top-right 'Clear all bookings' button (with helper text 'Do this often for clean test data.').",
+      "Clicking 'View Details' navigates to /bookings/:id, which renders five sections: Event Details, Customer Details, Payment Summary, Refund, and Booking Information. A 'Back to My Bookings' link returns to the list."
+    ],
+    "assumptions": [
+      "Demo credentials manish123@gmail.com / Manish9@@ successfully authenticate.",
+      "The signed-in test user has at least one existing booking so the smoke scenario can assert a non-empty list.",
+      "The signed-in test user has at least one booking so the View Details scenario has a target card.",
+      "Browser isolation per scenario (see hooks.ts) keeps the bookings list intact within a scenario; cross-scenario interference is not a concern."
+    ]
+  },
+  "coverage_summary": {
+    "total_test_cases": 2,
+    "by_category": {
+      "smoke": 1,
+      "positive": 1,
+      "negative": 0,
+      "boundary": 0,
+      "ui_ux": 0,
+      "state_session": 0,
+      "accessibility": 0,
+      "integration": 0,
+      "security": 0,
+      "performance_ui": 0
+    },
+    "priority_distribution": {
+      "critical": 1,
+      "high": 1,
+      "medium": 0,
+      "low": 0
+    }
+  },
+  "test_cases": [
+    {
+      "id": "TC-SMK-001",
+      "title": "Verify the My Bookings page loads and lists the user's booking cards",
+      "category": "smoke",
+      "priority": "critical",
+      "severity": "blocker",
+      "objective": "Confirm that after successful login, clicking the 'My Bookings' nav link renders the page with the H1 'My Bookings', the 'Clear all bookings' toolbar button, and at least one booking card carrying a reference, a status badge, a '#bookingId' link, an event name, and 'View Details' / 'Cancel Booking' actions.",
+      "preconditions": [
+        "Application is reachable at https://eventhub.rahulshettyacademy.com/.",
+        "Test user account exists with credentials manish123@gmail.com / Manish9@@.",
+        "Test user has at least one existing booking so the list is non-empty.",
+        "Browser is launched and on the EventHub login page."
+      ],
+      "test_data": [
+        {
+          "field": "Email",
+          "value": "manish123@gmail.com",
+          "notes": "Demo credential provided by the project."
+        },
+        {
+          "field": "Password",
+          "value": "MASKED_PASSWORD_DEMO_Manish9",
+          "notes": "Sensitive. Do not log in plain text; use the masked value in test reports."
+        }
+      ],
+      "environment": {
+        "browsers": ["chromium-latest"],
+        "viewports": ["1920x1080"],
+        "os": ["windows-11"],
+        "assumptions": [
+          "Stable network connection.",
+          "User is not pre-authenticated; login flow is executed from a clean session."
+        ]
+      },
+      "steps": [
+        {
+          "step_number": 1,
+          "action": "Open the EventHub application URL in a fresh browser session",
+          "target": "Browser address bar",
+          "input_value": "https://eventhub.rahulshettyacademy.com/",
+          "expected_result": "The EventHub login page is displayed with email and password input fields and a Sign In button.",
+          "automation_hint": "Wait for the email input to become visible before proceeding."
+        },
+        {
+          "step_number": 2,
+          "action": "Enter the demo email into the email input field",
+          "target": "Email input on login page",
+          "input_value": "manish123@gmail.com",
+          "expected_result": "The email input contains the entered value and the field is not in an error state.",
+          "automation_hint": "Fill the email field and assert its value matches the typed value."
+        },
+        {
+          "step_number": 3,
+          "action": "Enter the demo password into the password input field",
+          "target": "Password input on login page",
+          "input_value": "MASKED_PASSWORD_DEMO_Manish9",
+          "expected_result": "The password input contains the entered value and the characters are masked.",
+          "automation_hint": "Fill the password field; assert the input type is 'password' and the field is non-empty."
+        },
+        {
+          "step_number": 4,
+          "action": "Click the Sign In button on the login page",
+          "target": "Sign In button on login page",
+          "input_value": null,
+          "expected_result": "The application navigates to the dashboard, and the nav link 'My Bookings' (data-testid='nav-bookings') is visible in the top navigation.",
+          "automation_hint": "Click Sign In; assert the URL changes off the login route and the My Bookings nav link is visible."
+        },
+        {
+          "step_number": 5,
+          "action": "Click the 'My Bookings' link in the top navigation",
+          "target": "My Bookings nav link (data-testid='nav-bookings')",
+          "input_value": null,
+          "expected_result": "The URL changes to /bookings and the H1 'My Bookings' becomes visible.",
+          "automation_hint": "Click the My Bookings nav link; assert the URL ends with /bookings and the H1 text equals 'My Bookings'."
+        },
+        {
+          "step_number": 6,
+          "action": "Observe the booking list area on the My Bookings page",
+          "target": "Bookings list / card container on /bookings",
+          "input_value": null,
+          "expected_result": "At least one booking card (data-testid='booking-card') is rendered, and each visible card exposes a status badge, a '#bookingId' (data-testid='booking-id'), an event name, a 'View Details' link, and a 'Cancel Booking' button.",
+          "automation_hint": "Assert the count of [data-testid='booking-card'] is >= 1, that the first card contains a [data-testid='booking-id'] element, a status badge matching /confirmed|cancelled/i, an event name (e.g. an h3), a 'View Details' link, and a 'Cancel Booking' button."
+        },
+        {
+          "step_number": 7,
+          "action": "Observe the 'Clear all bookings' toolbar button",
+          "target": "Clear all bookings button on /bookings",
+          "input_value": null,
+          "expected_result": "The 'Clear all bookings' button is visible in the page header (do not click it).",
+          "automation_hint": "Assert the 'Clear all bookings' button is visible and enabled."
+        }
+      ],
+      "expected_final_state": "The user is authenticated, the URL is /bookings, the H1 'My Bookings' is visible, the 'Clear all bookings' toolbar button is present, and the bookings list is populated with at least one booking card.",
+      "expected_post_conditions": [
+        "User session is established; subsequent dashboard tabs are reachable without re-authentication.",
+        "The bookings list reflects the server-side state for the signed-in user at the time of load.",
+        "The 'Clear all bookings' button has NOT been clicked (no data is destroyed by this scenario)."
+      ],
+      "related_requirements": ["TC-POS-001"],
+      "tags": ["bookings", "smoke", "dashboard", "regression"]
+    },
+    {
+      "id": "TC-POS-001",
+      "title": "Verify clicking 'View Details' on a booking card opens that booking's detail page",
+      "category": "positive",
+      "priority": "high",
+      "severity": "major",
+      "objective": "Confirm that clicking 'View Details' on a booking card navigates to /bookings/:id and renders the full booking detail view (Event, Customer, Payment, Refund, Booking Information sections), and that the 'Back to My Bookings' link returns the user to the list.",
+      "preconditions": [
+        "User is already signed in with the demo credentials.",
+        "User is on /bookings and at least one booking card is rendered.",
+        "The first booking card's status is 'confirmed' (so the detail page is reachable via the public route; cancelled bookings may be 404)."
+      ],
+      "test_data": [
+        {
+          "field": "First booking card's #bookingId",
+          "value": "Dynamic — captured at runtime from the first [data-testid='booking-id'] element",
+          "notes": "Do not hardcode the booking id; capture it from the rendered card."
+        }
+      ],
+      "environment": {
+        "browsers": ["chromium-latest"],
+        "viewports": ["1920x1080"],
+        "os": ["windows-11"],
+        "assumptions": [
+          "Network is stable; the detail page request resolves quickly.",
+          "The booking id captured from the list maps to a valid /bookings/:id route."
+        ]
+      },
+      "steps": [
+        {
+          "step_number": 1,
+          "action": "Capture the '#bookingId' (data-testid='booking-id') from the first booking card on /bookings",
+          "target": "First booking card's booking-id element",
+          "input_value": null,
+          "expected_result": "A non-empty booking id (e.g. '#67865') is captured from the first card.",
+          "automation_hint": "Read the text of the first [data-testid='booking-id'] element; strip a leading '#' if present; treat the result as the target id."
+        },
+        {
+          "step_number": 2,
+          "action": "Click the 'View Details' link on the first booking card",
+          "target": "View Details link on the first booking card",
+          "input_value": null,
+          "expected_result": "The browser navigates to /bookings/:id (where :id is the captured id), and the URL contains that id.",
+          "automation_hint": "Click the 'View Details' link scoped to the first booking card; assert the URL matches the pattern /bookings/<digits>."
+        },
+        {
+          "step_number": 3,
+          "action": "Observe the booking detail page",
+          "target": "Booking detail sections on /bookings/:id",
+          "input_value": null,
+          "expected_result": "Five section headings are visible: 'Event Details', 'Customer Details', 'Payment Summary', 'Refund', and 'Booking Information'. The page H1 is the event name (e.g. 'World Tech Summit').",
+          "automation_hint": "Assert that all five H2 headings are visible and that the H1 text is non-empty."
+        },
+        {
+          "step_number": 4,
+          "action": "Verify the Payment Summary section shows the total paid and a non-zero ticket count",
+          "target": "Payment Summary section on /bookings/:id",
+          "input_value": null,
+          "expected_result": "The 'Tickets' field shows a positive integer, the 'Price per ticket' field shows a currency value, and the 'Total Paid' field shows a currency value that is at least as large as the per-ticket price (assuming ticket count >= 1).",
+          "automation_hint": "Read the Tickets text and parse it as an integer; assert it is >= 1. Read Price per ticket and Total Paid; assert Total Paid >= Price per ticket."
+        },
+        {
+          "step_number": 5,
+          "action": "Click the 'Back to My Bookings' link at the bottom of the detail page",
+          "target": "Back to My Bookings link on /bookings/:id",
+          "input_value": null,
+          "expected_result": "The browser navigates back to /bookings and the H1 'My Bookings' is visible again, with the booking cards still rendered.",
+          "automation_hint": "Click the 'Back to My Bookings' link; assert the URL ends with /bookings and the H1 is visible."
+        }
+      ],
+      "expected_final_state": "The user is back on /bookings, the H1 'My Bookings' is visible, and the booking cards are still rendered. No booking was created, modified, or cancelled by this test.",
+      "expected_post_conditions": [
+        "No booking is created, modified, or deleted by this test — it only validates navigation to and from the detail page.",
+        "The list state is unchanged from the start of the scenario."
+      ],
+      "related_requirements": ["TC-SMK-001"],
+      "tags": ["bookings", "navigation", "detail", "regression"]
+    }
+  ],
+  "open_questions": [
+    "Does cancelling a booking open a confirmation modal, fire window.confirm, or proceed immediately? Live inspection via Playwright MCP did not show a pre-rendered modal; the actual interaction needs to be observed in a headed run to choose the right handler. (Out of scope for the current top-2 cases; flagged for follow-up.)",
+    "Is there a server-side search/filter on /bookings (e.g. by status, date range) that is not exposed in the UI today? Flagged for a future negative/filter case once the UI exposes such a control.",
+    "Is the booking list paginated? The live UI today renders all bookings in a single stack; pagination is not present. Flagged for a future boundary case if pagination is added."
+  ]
+}

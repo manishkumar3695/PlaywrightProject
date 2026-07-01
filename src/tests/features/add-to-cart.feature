@@ -10,7 +10,7 @@ Feature: Add to Cart on Sauce Labs demo
     Given I open the Sauce Demo login page
     And I log in to Sauce Demo as "standard_user" with password "secret_sauce"
 
-  @TC-SMOKE-001 @smoke @regression @critical 
+  @TC-SMOKE-001 @smoke @regression @critica
   Scenario: Logged-in standard_user can add Sauce Labs Backpack to cart from inventory
     Then the cart badge should not be visible
     When I add the Sauce Labs Backpack to the cart from inventory
